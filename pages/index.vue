@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h1>Index</h1>
-    <Button label="Submit" />
+  <div class="mt-1 xl:mt-8">
+    <Hero />
+    <!-- <FormMoreInfo /> -->
   </div>
 </template>
 <script setup>
