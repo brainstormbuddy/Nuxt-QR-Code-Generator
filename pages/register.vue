@@ -1,10 +1,10 @@
 <template>
-  <div class="mt-1 xl:mt-8">
-    <Hero />
+  <div>
+    <h1>Register</h1>
+    <FormSignUp />
   </div>
 </template>
 <script setup>
-// const user = useSupabaseUser();
 onMounted(async () => {});
 </script>
 <style scoped></style>

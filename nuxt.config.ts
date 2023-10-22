@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["nuxt-primevue"],
+  modules: ["nuxt-primevue", "@nuxtjs/supabase"],
   css: [
     "primevue/resources/themes/lara-light-teal/theme.css",
     "primevue/resources/primevue.css",
@@ -13,7 +13,30 @@ export default defineNuxtConfig({
     usePrimeVue: true,
 
     components: {
-      include: ["Button", "DataTable", "InputText"],
+      include: ["Button", "DataTable", "InputText", "Toast", "ToastService"],
+    },
+  },
+  supabase: {
+    // Options
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+    redirectOptions: {
+      login: "/login",
+      callback: "/confirm",
+      exclude: ["/", "/register"],
+    },
+    cookieOptions: {
+      maxAge: 60 * 60 * 8,
+      sameSite: "lax",
+      secure: true,
+    },
+    clientOptions: {
+      auth: {
+        flowType: "pkce",
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true,
+      },
     },
   },
 });
