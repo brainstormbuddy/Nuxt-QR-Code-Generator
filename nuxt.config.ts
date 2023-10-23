@@ -13,7 +13,19 @@ export default defineNuxtConfig({
     usePrimeVue: true,
 
     components: {
-      include: ["Button", "DataTable", "InputText", "Toast", "ToastService"],
+      include: [
+        "Button",
+        "DataTable",
+        "InputText",
+        "Toast",
+        "ToastService",
+        "Dropdown",
+        "Sidebar",
+        "Avatar",
+        "PanelMenu",
+        "Message",
+        "Textarea",
+      ],
     },
   },
   supabase: {
