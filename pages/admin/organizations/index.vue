@@ -12,8 +12,21 @@
       </NuxtLink>
     </div>
   </div>
+  <div class="grid">
+    <div class="col-12" v-for="item in organizations" :key="item.id">
+      <organizations-list-model :organization="item" />
+    </div>
+  </div>
 </template>
 <script setup>
+const supabase = useSupabaseClient();
+const organizations = ref([]);
 definePageMeta({ layout: "admin" });
+
+onMounted(async () => {
+  const { data, error } = await supabase.from("organizations").select("*");
+  organizations.value = data;
+  console.log(organizations);
+});
 </script>
 <style scoped></style>

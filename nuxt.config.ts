@@ -25,6 +25,8 @@ export default defineNuxtConfig({
         "PanelMenu",
         "Message",
         "Textarea",
+        "DataView",
+        "Card",
       ],
     },
   },
