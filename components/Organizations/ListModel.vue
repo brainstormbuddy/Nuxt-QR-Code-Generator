@@ -31,7 +31,7 @@
             </span>
             <span class="line">
               <strong>Code: </strong>
-              {{ organization.code }}{{ organization.id.substring(0, 2) }}
+              {{ organization.code }}
             </span>
             <span class="line">
               <strong>Active: </strong>
