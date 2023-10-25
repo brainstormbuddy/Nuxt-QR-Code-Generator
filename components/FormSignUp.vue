@@ -62,14 +62,21 @@ onMounted(async () => {});
 const submit = async () => {
   console.log("Submit");
   try {
-    const { user, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
     });
     if (error) {
       console.error("Error de registro:", error);
     } else {
-      console.log("Registro exitoso:", user);
+      console.log("Registro exitoso:", data);
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .insert([
+          { name: name.value, email: email.value, user_id: data.user.id },
+        ])
+        .select();
+      console.log(profile);
       // Redirigir al usuario a otra página (por ejemplo, la página de inicio)
       navigateTo("/admin");
     }
