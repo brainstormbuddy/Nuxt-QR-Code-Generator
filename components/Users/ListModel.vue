@@ -50,15 +50,8 @@
         <div class="grid text-center">
           <div class="col-12">
             <div class="card">
-              <DataTable
-                :value="rel_users_organizations"
-                tableStyle="min-width: 50rem"
-              >
-                <Column field="code" header="Code"></Column>
-                <Column field="name" header="Name"></Column>
-                <Column field="category" header="Category"></Column>
-                <Column field="quantity" header="Quantity"></Column>
-              </DataTable>
+              <h3>Organizations</h3>
+              <users-list-link-to-organizations />
             </div>
           </div>
         </div>
@@ -73,8 +66,6 @@ const props = defineProps({
     default: {},
   },
 });
-
-const rel_users_organizations = ref([]);
 </script>
 <style scoped>
 .line {
