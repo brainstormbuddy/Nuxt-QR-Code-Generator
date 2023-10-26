@@ -12,8 +12,12 @@
           Creating secure QR codes for seamless access to your destinations.
         </p>
         <div class="flex gap-3">
-          <Button label="Sign Up" icon="pi pi-arrow-right" size="large" />
-          <Button label="Sign In" outlined size="large" />
+          <NuxtLink to="/register">
+            <Button label="Sign Up" icon="pi pi-arrow-right" size="large" />
+          </NuxtLink>
+          <NuxtLink to="/login">
+            <Button label="Sign In" outlined size="large" />
+          </NuxtLink>
         </div>
       </article>
       <div
