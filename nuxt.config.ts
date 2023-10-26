@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      SUPABASE_SB: process.env.SUPABASE_SB,
+    },
+  },
   devtools: { enabled: true },
   modules: ["nuxt-primevue", "@nuxtjs/supabase"],
   css: [

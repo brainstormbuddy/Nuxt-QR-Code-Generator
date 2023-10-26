@@ -32,6 +32,8 @@ import { useToast } from "primevue/usetoast";
 const toast = useToast();
 import { showToast } from "~/utils/toast";
 
+const config = useRuntimeConfig();
+
 const supabase = useSupabaseClient();
 const code = ref("");
 const session_id = ref("");
@@ -39,7 +41,7 @@ const profile_id = ref("");
 
 onMounted(async () => {
   session_id.value = await JSON.parse(
-    localStorage.getItem("sb-xqegefeujsmiitjnbqie-auth-token")
+    localStorage.getItem(`${config.public.SUPABASE_SB}`)
   );
   const { data: profile, error } = await supabase
     .from("profiles")
@@ -47,7 +49,6 @@ onMounted(async () => {
     .eq("user_id", session_id.value.user.id);
 
   profile_id.value = profile[0].id;
-  //   console.log(profile_id.value);
 });
 
 const submit = async () => {
