@@ -10,6 +10,7 @@
         optionLabel="name"
         placeholder="Select an Organization"
         class="w-full"
+        @change="selected_org"
       />
     </div>
   </div>
@@ -39,10 +40,12 @@
   <slot />
 </template>
 <script setup>
+const supabase = useSupabaseClient();
 const visible = ref(false);
-const org_id = ref();
+const org_id = ref({});
 const started = ref(false);
 const organizations = ref([]);
+const rel_users_organizations = ref([]);
 //{ name: "New York", code: "NY" }
 
 const items = ref([
@@ -59,10 +62,43 @@ const items = ref([
 ]);
 
 onMounted(async () => {
-  if (organizations.value.length > 0) {
+  console.log("Mounted");
+  let { data, error } = await supabase
+    .from("rel_users_to_organizations")
+    .select("*, organizations:organization_id(*)");
+  rel_users_organizations.value = data;
+
+  const payload = rel_users_organizations.value;
+
+  const result = payload.map((item) => {
+    return {
+      code: item.id,
+      name: item.organizations.name,
+    };
+  });
+
+  organizations.value = result;
+
+  if (rel_users_organizations.value.length > 0) {
     started.value = true;
+    if (localStorage.getItem("sb_org_id") == null) {
+      console.log("No org");
+      // console.log(organizations.value[0].code);
+      localStorage.setItem("sb_org_id", JSON.stringify(organizations.value[0]));
+    }
+    org_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
+  } else {
+    console.log("No org");
   }
+
+  // console.log(localStorage.getItem("sb_org_id"));
+  console.log(org_id.value);
 });
+
+const selected_org = async () => {
+  console.log("Selected");
+  localStorage.setItem("sb_org_id", JSON.stringify(org_id.value));
+};
 </script>
 <style>
 .p-panelmenu .p-panelmenu-header .p-panelmenu-header-content {
