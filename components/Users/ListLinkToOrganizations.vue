@@ -15,7 +15,7 @@ onMounted(async () => {
     .select("*, organizations:organization_id(*)");
 
   rel_users_organizations.value = data;
-  console.log(rel_users_organizations.value);
+  // console.log(rel_users_organizations.value);
 });
 </script>
 <style scoped></style>
