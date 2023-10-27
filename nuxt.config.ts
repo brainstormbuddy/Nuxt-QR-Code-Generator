@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       SUPABASE_SB: process.env.SUPABASE_SB,
+      APP_URL_BASE: process.env.APP_URL_BASE,
     },
   },
   devtools: { enabled: true },
@@ -36,6 +37,11 @@ export default defineNuxtConfig({
         "Column",
         "ColumnGroup",
         "Row",
+        "TabView",
+        "TabPanel",
+        "Calendar",
+        "Chip",
+        "Checkbox",
       ],
     },
   },

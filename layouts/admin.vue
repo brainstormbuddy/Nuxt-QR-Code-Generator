@@ -92,7 +92,7 @@ onMounted(async () => {
   }
 
   // console.log(localStorage.getItem("sb_org_id"));
-  console.log(org_id.value);
+  // console.log(org_id.value);
 });
 
 const selected_org = async () => {
