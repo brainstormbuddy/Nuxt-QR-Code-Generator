@@ -123,10 +123,17 @@ const form = ref({});
 const organization = ref({});
 
 const generate = ref(false);
+const session_id = ref();
+const user_id = ref("");
 
 onMounted(async () => {
   organization.value = JSON.parse(localStorage.getItem("sb_org_id"));
   form.value.just_once = true;
+  session_id.value = await JSON.parse(
+    localStorage.getItem(`${config.public.SUPABASE_SB}`)
+  );
+  user_id.value = session_id.value.user.id;
+  user_id.value = user_id.value.split("-")[0];
 });
 
 const generateQR = async () => {
@@ -149,7 +156,7 @@ const generateQR = async () => {
       });
     } else {
       const code_id = await data[0].id;
-      text.value = `${config.public.APP_URL_BASE}/admin/codes/validate?code=${code_id}&link=${form.value.link}`;
+      text.value = `${config.public.APP_URL_BASE}/admin/codes/${code_id}/validate?link=${form.value.link_id}&u=${user_id.value}`;
       image_qrcode.value = await QRCode.toDataURL(text.value);
 
       const { error } = await supabase

@@ -42,6 +42,7 @@ export default defineNuxtConfig({
         "Calendar",
         "Chip",
         "Checkbox",
+        "Badge",
       ],
     },
   },
