@@ -78,9 +78,9 @@
 definePageMeta({ layout: "admin" });
 const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
+const session_id = ref({});
 const codes = ref([]);
 const organization = ref("");
-
 const current_codes = ref([]);
 const overdue_codes = ref([]);
 const used_codes = ref([]);
@@ -95,7 +95,20 @@ const load_codes = async () => {
   codes.value = data;
 };
 
+const validate_access = async () => {
+  console.log("validate_access");
+
+  session_id.value = await JSON.parse(
+    localStorage.getItem(`${config.public.SUPABASE_SB}`)
+  );
+
+  if (session_id.value == undefined) {
+    return navigateTo("/");
+  }
+};
+
 onMounted(async () => {
+  await validate_access();
   await load_codes();
   current_codes.value = codes.value.filter((code) => code.state === "pending");
   overdue_codes.value = codes.value.filter((code) => code.state === "overdue");
