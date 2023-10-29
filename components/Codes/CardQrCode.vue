@@ -41,12 +41,25 @@
               <span class="line">{{ code.end_date }}</span>
               <span class="line text-primary"></span>
             </h3>
+            <NuxtLink :to="url" target="_blank">
+              <Button
+                label="View"
+                icon="pi pi-eye"
+                severity="primary"
+                v-if="code.state == 'pending'"
+                @click="deleted"
+                class="ml-1 mr-1"
+                outlined
+              />
+            </NuxtLink>
+
             <Button
               label="Delete"
               icon="pi pi-trash"
               severity="danger"
               v-if="code.state == 'pending'"
               @click="deleted"
+              class="ml-1 mr-1"
             />
           </div>
         </div>
@@ -74,6 +87,9 @@ user_id.value = session_id.value.user.id;
 user_id.value = user_id.value.split("-")[0];
 link.value = JSON.parse(localStorage.getItem("sb_org_id"));
 
+const url = ref();
+url.value = `${config.public.APP_URL_BASE}/admin/codes/${props.code.id}/?link=${link.value.code}&u=${user_id.value}`;
+
 const formatDate = (date) => {
   const d = new Date(date);
   const new_date = d.toISOString().slice(0, 10);
@@ -99,13 +115,13 @@ if (props.code.state == "pending") {
 
 const share = async () => {
   console.log("Share");
-  const url = `${config.public.APP_URL_BASE}/admin/codes/${props.code.id}/?link=${link.value.code}&u=${user_id.value}`;
-  console.log(url);
+  // const url = `${config.public.APP_URL_BASE}/admin/codes/${props.code.id}/?link=${link.value.code}&u=${user_id.value}`;
+  console.log(url.value);
   if (navigator.share) {
     await navigator.share({
       title: props.code.name,
       text: `QR generated for access to organization, from 2023-10-10 to 2023-10-12`,
-      url: url,
+      url: url.value,
     });
   }
 };
