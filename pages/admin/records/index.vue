@@ -7,7 +7,6 @@
 <script setup>
 definePageMeta({ layout: "admin" });
 const supabase = useSupabaseClient();
-const config = useRuntimeConfig();
 
 const records = ref([]);
 

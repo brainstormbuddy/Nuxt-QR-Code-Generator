@@ -2,33 +2,23 @@
   <div>
     <h1>Admin</h1>
     <div class="grid">
-      <div class="col-12 xl:col-4">
+      <div class="col-12 xl:col-6">
         <CardStat
           :backgroud="'bg-green-500'"
           :bg_icon="'bg-green-600'"
           :icon="'pi pi-sign-in'"
-          :counter="'123K'"
+          :counter="`${counter_inbound}`"
           :label="'Entries '"
           :color_label="'text-green-100'"
         />
       </div>
-      <div class="col-12 xl:col-4">
+      <div class="col-12 xl:col-6">
         <CardStat
           :backgroud="'bg-blue-500'"
           :bg_icon="'bg-blue-600'"
           :icon="'pi pi-qrcode'"
-          :counter="'123K'"
+          :counter="`${counter_current_codes}`"
           :label="'Pending '"
-        />
-      </div>
-      <div class="col-12 xl:col-4">
-        <CardStat
-          :backgroud="'bg-orange-500'"
-          :bg_icon="'bg-orange-600'"
-          :icon="'pi pi-sign-out'"
-          :counter="'123K'"
-          :label="'Exits'"
-          :color_label="'text-orange-100'"
         />
       </div>
     </div>
@@ -37,6 +27,45 @@
 <script setup>
 definePageMeta({
   layout: "admin",
+});
+
+const supabase = useSupabaseClient();
+const records = ref([]);
+
+const counter_inbound = ref(0);
+const counter_outbound = ref(0);
+
+const organization = ref("");
+const codes = ref([]);
+const current_codes = ref([]);
+const counter_current_codes = ref(0);
+
+const load_codes = async () => {
+  organization.value = JSON.parse(localStorage.getItem("sb_org_id"));
+  const { data, error } = await supabase
+    .from("codes")
+    .select("*")
+    .eq("link_id", organization.value.code);
+  codes.value = data;
+  current_codes.value = codes.value.filter((code) => code.state === "pending");
+  counter_current_codes.value = current_codes.value.length;
+};
+
+onMounted(async () => {
+  let { data, error } = await supabase
+    .from("records")
+    .select(
+      "*, codes: code_id(*,rel_users_to_organizations: link_id(*, profiles: profile_id(*)) ) "
+    );
+
+  records.value = data;
+  console.log(data);
+
+  counter_inbound.value = records.value.length;
+
+  console.log(counter_inbound.value);
+
+  await load_codes();
 });
 </script>
 <style scoped></style>
