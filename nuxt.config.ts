@@ -42,6 +42,7 @@ export default defineNuxtConfig({
         "Calendar",
         "Chip",
         "Checkbox",
+        "Badge",
       ],
     },
   },
@@ -52,7 +53,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: "/login",
       callback: "/confirm",
-      exclude: ["/", "/register"],
+      exclude: ["/", "/register", "/admin/codes/*"],
     },
     cookieOptions: {
       maxAge: 60 * 60 * 8,
