@@ -1,5 +1,4 @@
 <template>
-  <!-- <pre>{{ code }}</pre> -->
   <div class="card text-center">
     <Card>
       <template #title>
@@ -8,8 +7,14 @@
       <template #content>
         <div class="grid">
           <div class="col-12">
-            <h1>{{ code?.name }}</h1>
-            <Chip :label="code?.state" />
+            <h1 class="mt-0" v-if="code?.state == 'pending'">
+              {{ code?.name }}
+            </h1>
+            <h1 class="mt-0" v-else>
+              <del>{{ code?.name }}</del>
+            </h1>
+            <Chip :label="code?.state" v-if="code?.state == 'pending'" />
+            <Chip :label="code?.state" class="bg-red-600 text-white" v-else />
             <br />
             <img :src="code?.datas" alt="QR Code" id="qr-code" />
             <div class="mt-2">
@@ -49,5 +54,10 @@ const props = defineProps({
 
 .p-card {
   box-shadow: none !important;
+}
+
+del {
+  text-decoration: line-through;
+  text-decoration-color: red;
 }
 </style>
