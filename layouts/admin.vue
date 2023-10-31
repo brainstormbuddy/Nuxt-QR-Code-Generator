@@ -101,22 +101,48 @@ onMounted(async () => {
     .from("rel_users_to_organizations")
     .select("*, organizations:organization_id(*), profiles:profile_id(*)")
     .eq("profiles.user_id", session_id.value.user.id);
+
+  // .eq("profiles.user_id", session_id.value.user.id)
   rel_users_organizations.value = data;
 
   const payload = rel_users_organizations.value;
 
-  const result = payload.map((item) => {
-    if (item.profiles.user_id == session_id.value.user.id) {
-      return {
-        code: item.id,
-        name: item.organizations.name,
-      };
+  // const result = payload;
+
+  console.log(payload);
+  let result = [];
+
+  for (let x in payload) {
+    console.log(payload[x]);
+    if (payload[x].profiles != null) {
+      result.push({
+        code: payload[x].id,
+        name: payload[x].organizations.name,
+      });
     }
-  });
+  }
+
+  // const result = payload.map((item) => {
+  //   // if (item.profiles.user_id == session_id.value.user.id) {
+  //   return {
+  //     code: item.id,
+  //     name: item.organizations.name,
+  //   };
+  //   // }
+  // });
+
+  // const result = payload.map((item) => {
+  //   if (item.profiles.user_id == session_id.value.user.id) {
+  //     return {
+  //       code: item.id,
+  //       name: item.organizations.name,
+  //     };
+  //   }
+  // });
 
   organizations.value = result;
 
-  if (rel_users_organizations.value.length > 0) {
+  if (organizations.value.length > 0) {
     started.value = true;
     if (localStorage.getItem("sb_org_id") == null) {
       console.log("No org");
