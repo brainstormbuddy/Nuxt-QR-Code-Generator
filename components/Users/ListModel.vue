@@ -16,7 +16,7 @@
           </div>
           <div class="col-12 lg:col-10">
             <span class="line">
-              <strong>Id: </strong>
+              <strong>Profile ID: </strong>
               {{ user.id }}
             </span>
             <span class="line">
@@ -36,7 +36,7 @@
               {{ user.is_active }}
             </span>
             <span class="line">
-              <strong>hash: </strong>
+              <strong>User ID: </strong>
               {{ user.user_id }}
             </span>
             <span class="line">
@@ -51,7 +51,7 @@
           <div class="col-12">
             <div class="card">
               <h3>Organizations</h3>
-              <users-list-link-to-organizations />
+              <users-list-link-to-organizations :user_id="user.user_id" />
             </div>
           </div>
         </div>

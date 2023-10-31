@@ -24,9 +24,9 @@
         class="w-full xl:w-4 relative flex justify-content-center align-items-center"
       >
         <img
-          src="~/assets/img/qr-wellcome.png"
+          src="~/assets/img/primary-qr-code-image.png"
           alt="Image"
-          class="md:ml-auto block md:h-full"
+          class="h-full"
           width="320px"
         />
       </div>

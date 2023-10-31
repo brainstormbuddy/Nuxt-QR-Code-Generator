@@ -1,4 +1,3 @@
-import type { NuxtLink } from '#build/components';
 <template>
   <div class="card text-center">
     <Card>
@@ -99,15 +98,30 @@ const validate = async () => {
       })
       .eq("id", props.code.id)
       .select();
-    showToast(toast, {
-      severity: "success",
-      summary: "Success",
-      detail: "Authorized Access",
-      life: 3000,
-    });
 
-    // navigateTo("/admin/scanner");
-    reloadNuxtApp();
+    if (error) {
+      showToast(toast, {
+        severity: "warn",
+        summary: "Failed",
+        detail: `${error}`,
+        life: 3000,
+      });
+    } else {
+      const { data: records, error } = await supabase
+        .from("records")
+        .insert([{ description: props.code.name, code_id: props.code.id }])
+        .select();
+
+      showToast(toast, {
+        severity: "success",
+        summary: "Success",
+        detail: "Authorized Access",
+        life: 3000,
+      });
+
+      // navigateTo("/admin/scanner");
+      reloadNuxtApp();
+    }
   } catch (error) {
     console.log(error);
     showToast(toast, {
