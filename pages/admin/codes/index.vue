@@ -1,8 +1,5 @@
 <template>
   <h1 v-if="organization != null">Codes</h1>
-  <pre>
-    {{ organization }}
-  </pre>
   <div class="mt-4 mb-4">
     <codes-form-generate-qr v-if="organization != null" />
   </div>

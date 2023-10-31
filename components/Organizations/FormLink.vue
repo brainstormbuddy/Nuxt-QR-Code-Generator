@@ -101,7 +101,8 @@ const submit = async () => {
             detail: `Account has been linked successfully`,
             life: 3000,
           });
-          navigateTo("/admin");
+          // navigateTo("/admin");
+          window.location.href = "/admin";
         }
       } else {
         showToast(toast, {
