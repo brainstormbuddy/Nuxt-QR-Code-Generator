@@ -26,7 +26,7 @@ definePageMeta({ layout: "admin" });
 onMounted(async () => {
   const { data, error } = await supabase.from("organizations").select("*");
   organizations.value = data;
-  console.log(organizations);
+  // console.log(organizations);
 });
 </script>
 <style scoped></style>

@@ -59,16 +59,24 @@ const session_id = ref();
 
 const profile_id = ref();
 
+const hidden_profile = ref("hidden");
+
 const items = ref([
   { label: "Home", icon: "pi pi-fw pi-home", url: "/admin" },
   { label: "QR Scanner ", icon: "pi pi-fw pi-shield", url: "/admin/scanner" },
   { label: "My QRs codes", icon: "pi pi-fw pi-qrcode", url: "/admin/codes" },
   { label: "Records", icon: "pi pi-fw pi-list", url: "/admin/records" },
-  { label: "Users", icon: "pi pi-fw pi-users", url: "/admin/users" },
+  {
+    label: "Users",
+    icon: "pi pi-fw pi-users",
+    url: "/admin/users",
+    class: hidden_profile,
+  },
   {
     label: "Organizations",
     icon: "pi pi-fw pi-building",
     url: "/admin/organizations",
+    class: hidden_profile,
   },
 ]);
 
@@ -77,16 +85,17 @@ onMounted(async () => {
     localStorage.getItem(`${config.public.SUPABASE_SB}`)
   );
 
-  // console.log(session_id.value);
-  // console.log(session_id.value.user.id);
+  let { data: profiles, err } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("user_id", session_id.value.user.id);
 
-  // let { data: profiles, err } = await supabase
-  //   .from("profiles")
-  //   .select("id")
-  //   .eq("user_id", session_id.value.user.id);
+  profile_id.value = profiles[0];
+  // console.log(profile_id.value.role);
 
-  // profile_id.value = profiles[0].id;
-  // console.log(profile_id.value);
+  if (profile_id.value.role == "admin") {
+    hidden_profile.value = "";
+  }
 
   let { data, error } = await supabase
     .from("rel_users_to_organizations")

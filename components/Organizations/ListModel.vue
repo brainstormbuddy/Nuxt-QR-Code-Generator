@@ -72,6 +72,7 @@ const copyCode = () => {
   document.body.appendChild(text);
   text.select();
   document.execCommand("copy");
+  document.body.removeChild(text);
 };
 </script>
 <style scoped>
