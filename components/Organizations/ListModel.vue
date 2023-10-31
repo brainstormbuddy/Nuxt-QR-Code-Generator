@@ -43,6 +43,16 @@
             </span>
           </div>
         </div>
+        <p id="invitation-code" class="hidden">
+          {{ organization.code }}
+        </p>
+      </template>
+      <template #footer>
+        <Button
+          label="Copy invitation code "
+          class="full-width-button"
+          @click="copyCode"
+        />
       </template>
     </Card>
   </div>
@@ -54,6 +64,15 @@ const props = defineProps({
     default: {},
   },
 });
+
+const copyCode = () => {
+  console.log("copy code");
+  const text = document.createElement("textarea");
+  text.value = `I invite you to add my organization "${props.organization.name}" in Amoso App with the following invitation code: ${props.organization.code}`;
+  document.body.appendChild(text);
+  text.select();
+  document.execCommand("copy");
+};
 </script>
 <style scoped>
 .line {

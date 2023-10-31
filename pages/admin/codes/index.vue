@@ -1,9 +1,12 @@
 <template>
-  <h1>Codes</h1>
+  <h1 v-if="organization != null">Codes</h1>
+  <pre>
+    {{ organization }}
+  </pre>
   <div class="mt-4 mb-4">
-    <codes-form-generate-qr />
+    <codes-form-generate-qr v-if="organization != null" />
   </div>
-  <div class="card">
+  <div class="card" v-if="organization != null">
     <TabView>
       <TabPanel>
         <template #header>
