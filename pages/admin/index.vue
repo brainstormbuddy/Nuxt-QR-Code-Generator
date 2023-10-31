@@ -1,6 +1,9 @@
 <template>
   <div>
     <h1>Admin</h1>
+    <!-- <pre>
+      {{ records }}
+    </pre> -->
     <div class="grid">
       <div class="col-12 xl:col-6">
         <CardStat
@@ -28,7 +31,7 @@
 definePageMeta({
   layout: "admin",
 });
-
+const config = useRuntimeConfig();
 const supabase = useSupabaseClient();
 const records = ref([]);
 
@@ -39,6 +42,9 @@ const organization = ref("");
 const codes = ref([]);
 const current_codes = ref([]);
 const counter_current_codes = ref(0);
+
+const org_id = ref({});
+const session_id = ref();
 
 const load_codes = async () => {
   organization.value = JSON.parse(localStorage.getItem("sb_org_id"));
@@ -52,18 +58,33 @@ const load_codes = async () => {
 };
 
 onMounted(async () => {
+  session_id.value = await JSON.parse(
+    localStorage.getItem(`${config.public.SUPABASE_SB}`)
+  );
+
+  org_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
+
   let { data, error } = await supabase
     .from("records")
     .select(
-      "*, codes: code_id(*,rel_users_to_organizations: link_id(*, profiles: profile_id(*)) ) "
-    );
+      "*, codes: code_id(*,rel_users_to_organizations: link_id(*, profiles: profile_id(*)))"
+    )
+    .eq("codes.rel_users_to_organizations.id", org_id.value.code);
 
   records.value = data;
-  console.log(data);
+
+  records.value = data.map((item) => {
+    if (
+      item.codes.rel_users_to_organizations.profiles.user_id ==
+      session_id.value.user.id
+    ) {
+      return {
+        ...item,
+      };
+    }
+  });
 
   counter_inbound.value = records.value.length;
-
-  console.log(counter_inbound.value);
 
   await load_codes();
 });

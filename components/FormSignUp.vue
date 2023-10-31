@@ -1,6 +1,15 @@
 <template>
   <div>
-    <h1>Sign Up</h1>
+    <div class="grid">
+      <div class="col-12 text-center">
+        <img
+          src="~/assets/img/primary-qr-code-image.png"
+          alt="Image"
+          class="h-full"
+          width="320px"
+        />
+      </div>
+    </div>
     <form @submit.prevent="submit">
       <div class="grid">
         <div class="col-12 mt-2">
@@ -38,12 +47,11 @@
         </div>
         <div class="col-12 mt-1">
           <Button
-            label="Guardar"
-            icon="pi pi-save"
+            label="Send"
+            icon="pi pi-send"
             class="full-width-button"
             size="large"
             type="submit"
-            severity="success"
           />
         </div>
       </div>
