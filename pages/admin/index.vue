@@ -1,10 +1,10 @@
 <template>
   <div>
     <h1>Admin</h1>
-    <!-- <pre>
-      {{ records }}
-    </pre> -->
-    <div class="grid">
+    <pre>
+      {{ data_test }}
+    </pre>
+    <!-- <div class="grid">
       <div class="col-12 xl:col-6">
         <CardStat
           :backgroud="'bg-green-500'"
@@ -24,13 +24,17 @@
           :label="'Pending '"
         />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup>
+import useApi from "@/composables/useApi";
+const { getRecords } = useApi();
+
 definePageMeta({
   layout: "admin",
 });
+
 const config = useRuntimeConfig();
 const supabase = useSupabaseClient();
 const records = ref([]);
@@ -44,7 +48,10 @@ const current_codes = ref([]);
 const counter_current_codes = ref(0);
 
 const org_id = ref({});
+const link_id = ref();
 const session_id = ref();
+
+const data_test = ref([]);
 
 const load_codes = async () => {
   organization.value = JSON.parse(localStorage.getItem("sb_org_id"));
@@ -57,13 +64,7 @@ const load_codes = async () => {
   counter_current_codes.value = current_codes.value.length;
 };
 
-onMounted(async () => {
-  session_id.value = await JSON.parse(
-    localStorage.getItem(`${config.public.SUPABASE_SB}`)
-  );
-
-  org_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
-
+const load_records = async () => {
   let { data, error } = await supabase
     .from("records")
     .select(
@@ -85,8 +86,29 @@ onMounted(async () => {
   });
 
   counter_inbound.value = records.value.length;
+};
 
-  await load_codes();
+// const test_query = async () => {
+//   const { data, error } = await supabase
+//     .from("records")
+//     .select("*,codes!inner(name))")
+//     .eq("codes.name", "Alana");
+
+//   data_test.value = data;
+//   console.log(data_test.value);
+// };
+
+onMounted(async () => {
+  // session_id.value = await JSON.parse(
+  //   localStorage.getItem(`${config.public.SUPABASE_SB}`)
+  // );
+
+  link_id.value = await JSON.parse(localStorage.getItem("sb_org_id"));
+  console.log(link_id.value);
+  // await load_records();
+  // await load_codes();
+  // await test_query();
+  data_test.value = await getRecords(link_id.value.code);
 });
 </script>
 <style scoped></style>

@@ -109,11 +109,11 @@ onMounted(async () => {
 
   // const result = payload;
 
-  console.log(payload);
+  // console.log(payload);
   let result = [];
 
   for (let x in payload) {
-    console.log(payload[x]);
+    // console.log(payload[x]);
     if (payload[x].profiles != null) {
       result.push({
         code: payload[x].id,
