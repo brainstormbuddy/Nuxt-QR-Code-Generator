@@ -1,12 +1,17 @@
 <template>
+  <!-- <pre>
+    {{ listLinksOrganizations }}
+
+    {{ link_id }}
+  </pre> -->
   <div class="grid">
     <div class="col-1 xl:col-6">
       <Button icon="pi pi-bars" @click="visible = true" />
     </div>
     <div class="col-11 xl:col-6">
       <Dropdown
-        v-model="org_id"
-        :options="organizations"
+        v-model="link_id"
+        :options="listLinksOrganizations"
         optionLabel="name"
         placeholder="Select an Organization"
         class="w-full"
@@ -47,19 +52,21 @@
   <slot />
 </template>
 <script setup>
-const supabase = useSupabaseClient();
 const config = useRuntimeConfig();
-const visible = ref(false);
-const org_id = ref({});
-const started = ref(false);
-const organizations = ref([]);
-const rel_users_organizations = ref([]);
 
+import useApi from "@/composables/useApi";
+const { getLinksOrganizations } = useApi();
+
+const visible = ref(false);
+const started = ref(false);
 const session_id = ref();
 
 const profile_id = ref();
 
 const hidden_profile = ref("hidden");
+
+const listLinksOrganizations = ref([]);
+const link_id = ref({});
 
 const items = ref([
   { label: "Home", icon: "pi pi-fw pi-home", url: "/admin" },
@@ -85,89 +92,40 @@ onMounted(async () => {
     localStorage.getItem(`${config.public.SUPABASE_SB}`)
   );
 
-  let { data: profiles, err } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", session_id.value.user.id);
+  const results = await getLinksOrganizations(session_id.value.user.id);
 
-  profile_id.value = profiles[0];
-  // console.log(profile_id.value.role);
+  listLinksOrganizations.value = results.map((item) => {
+    return {
+      code: item.id,
+      name: item.organizations.name,
+      role: item.profiles.role,
+    };
+  });
 
-  if (profile_id.value.role == "admin") {
-    hidden_profile.value = "";
-  }
-
-  let { data, error } = await supabase
-    .from("rel_users_to_organizations")
-    .select("*, organizations:organization_id(*), profiles:profile_id(*)")
-    .eq("profiles.user_id", session_id.value.user.id);
-
-  // .eq("profiles.user_id", session_id.value.user.id)
-  rel_users_organizations.value = data;
-
-  const payload = rel_users_organizations.value;
-
-  // const result = payload;
-
-  // console.log(payload);
-  let result = [];
-
-  for (let x in payload) {
-    // console.log(payload[x]);
-    if (payload[x].profiles != null) {
-      result.push({
-        code: payload[x].id,
-        name: payload[x].organizations.name,
-      });
-    }
-  }
-
-  // const result = payload.map((item) => {
-  //   // if (item.profiles.user_id == session_id.value.user.id) {
-  //   return {
-  //     code: item.id,
-  //     name: item.organizations.name,
-  //   };
-  //   // }
-  // });
-
-  // const result = payload.map((item) => {
-  //   if (item.profiles.user_id == session_id.value.user.id) {
-  //     return {
-  //       code: item.id,
-  //       name: item.organizations.name,
-  //     };
-  //   }
-  // });
-
-  organizations.value = result;
-
-  if (organizations.value.length > 0) {
+  if (listLinksOrganizations.value.length > 0) {
     started.value = true;
-    if (localStorage.getItem("sb_org_id") == null) {
-      console.log("No org");
-      // console.log(organizations.value[0].code);
-      localStorage.setItem("sb_org_id", JSON.stringify(organizations.value[0]));
-    }
-    org_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
-  } else {
-    console.log("No org");
-  }
 
-  // console.log(localStorage.getItem("sb_org_id"));
-  // console.log(org_id.value);
+    if (localStorage.getItem("sb_org_id") === null) {
+      localStorage.setItem(
+        "sb_org_id",
+        JSON.stringify(listLinksOrganizations.value[0])
+      );
+    }
+
+    link_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
+
+    if (link_id.value.role == "admin") {
+      hidden_profile.value = "";
+    }
+  }
 });
 
 const selected_org = async () => {
-  localStorage.setItem("sb_org_id", JSON.stringify(org_id.value));
-
-  // reloadNuxtApp();
+  localStorage.setItem("sb_org_id", JSON.stringify(link_id.value));
   window.location.reload();
 };
 
 const logout = async () => {
-  // localStorage.removeItem("sb_org_id");
-  // localStorage.removeItem(`${config.public.SUPABASE_SB}`);
   localStorage.clear();
   navigateTo("/");
 };

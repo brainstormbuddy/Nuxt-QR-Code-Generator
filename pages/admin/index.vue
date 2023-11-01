@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Admin</h1>
+    <!-- <pre>{{ link_id }}</pre> -->
     <div class="grid">
       <div class="col-12 xl:col-6">
         <CardStat
