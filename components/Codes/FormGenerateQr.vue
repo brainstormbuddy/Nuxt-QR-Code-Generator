@@ -33,11 +33,7 @@
       <form @submit.prevent="generateQR">
         <div class="grid">
           <div class="col-12 text-center">
-            <Chip
-              :label="organization.name"
-              icon="pi pi-flag-fill"
-              class="mt-4"
-            />
+            <Chip :label="link_id.name" icon="pi pi-flag-fill" class="mt-4" />
           </div>
           <div class="col-12 mt-2">
             <div class="flex flex-column gap-2">
@@ -108,6 +104,9 @@ import { useToast } from "primevue/usetoast";
 const toast = useToast();
 import { showToast } from "~/utils/toast";
 
+import useApi from "@/composables/useApi";
+const { createCode, updateCode } = useApi();
+
 const config = useRuntimeConfig();
 const supabase = useSupabaseClient();
 const text = ref("");
@@ -118,16 +117,15 @@ const glob = import.meta.glob("~/assets/img/*.png", { eager: true });
 const images = Object.fromEntries(
   Object.entries(glob).map(([key, value]) => [filename(key), value.default])
 );
-// const session_id = ref();
 const form = ref({});
-const organization = ref({});
+const link_id = ref({});
 
 const generate = ref(false);
 const session_id = ref();
 const user_id = ref("");
 
 onMounted(async () => {
-  organization.value = JSON.parse(localStorage.getItem("sb_org_id"));
+  link_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
   form.value.just_once = true;
   session_id.value = await JSON.parse(
     localStorage.getItem(`${config.public.SUPABASE_SB}`)
@@ -139,42 +137,35 @@ onMounted(async () => {
 const generateQR = async () => {
   try {
     //
-    form.value.link_id = organization.value.code;
+    form.value.link_id = link_id.value.code;
     const fields = JSON.parse(JSON.stringify(form.value));
     console.log(fields);
-    const { data, error } = await supabase
-      .from("codes")
-      .insert([fields])
-      .select();
-    //
-    if (error) {
-      showToast(toast, {
-        severity: "warn",
-        summary: "Failed",
-        detail: `${error}`,
-        life: 3000,
-      });
-    } else {
-      const code_id = await data[0].id;
-      text.value = `${config.public.APP_URL_BASE}/admin/codes/${code_id}/validate?link=${form.value.link_id}&u=${user_id.value}`;
-      image_qrcode.value = await QRCode.toDataURL(text.value);
 
-      const { error } = await supabase
-        .from("codes")
-        .update({ datas: image_qrcode.value })
-        .eq("id", code_id);
+    const data = await createCode(fields);
+    const code_id = await data[0].id;
+    text.value = `${config.public.APP_URL_BASE}/admin/codes/${code_id}/validate?link=${form.value.link_id}&u=${user_id.value}`;
+    image_qrcode.value = await QRCode.toDataURL(text.value);
 
-      showToast(toast, {
-        severity: "success",
-        summary: "Success",
-        detail: "Qr Code Generated",
-        life: 3000,
-      });
+    const update_code = await updateCode(code_id, {
+      datas: image_qrcode.value,
+    });
 
-      generate.value = true;
-    }
+    showToast(toast, {
+      severity: "success",
+      summary: "Success",
+      detail: "Qr Code Generated",
+      life: 3000,
+    });
+
+    generate.value = true;
   } catch (err) {
     console.error(err);
+    showToast(toast, {
+      severity: "warn",
+      summary: "Failed",
+      detail: `${err}`,
+      life: 3000,
+    });
   }
 };
 
