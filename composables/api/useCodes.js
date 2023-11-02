@@ -38,10 +38,24 @@ export default function () {
     return data;
   }
 
+  async function getCode(id) {
+    const { data, error } = await supabase
+      .from("codes")
+      .select(
+        "*, rel_users_to_organizations!inner(*, organizations!inner(*), profiles!inner(*))"
+      )
+      .eq("id", id)
+      .limit(1);
+
+    if (error) throw error;
+    return data[0];
+  }
+
   return {
     getCodes,
     getCodesStatePending,
     createCode,
     updateCode,
+    getCode,
   };
 }
