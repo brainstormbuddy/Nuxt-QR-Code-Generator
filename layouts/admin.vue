@@ -98,6 +98,7 @@ onMounted(async () => {
     return {
       code: item.id,
       name: item.organizations.name,
+      org_id: item.organizations.id,
       profile_id: item.profiles.id,
       role: item.profiles.role,
     };

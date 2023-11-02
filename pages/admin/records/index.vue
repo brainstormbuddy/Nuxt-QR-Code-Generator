@@ -6,32 +6,15 @@
 </template>
 <script setup>
 definePageMeta({ layout: "admin" });
-const supabase = useSupabaseClient();
-const link = ref();
+import useApi from "@/composables/useApi";
+const { getRecords } = useApi();
+const link_id = ref();
 const records = ref([]);
 
 onMounted(async () => {
-  link.value = JSON.parse(localStorage.getItem("sb_org_id"));
+  link_id.value = await JSON.parse(localStorage.getItem("sb_org_id"));
 
-  let { data, error } = await supabase
-    .from("records")
-    .select(
-      "*, codes: code_id(*,rel_users_to_organizations: link_id(*, profiles: profile_id(*)) ) "
-    )
-    .eq("codes.rel_users_to_organizations.id", link.value.code);
-
-  const result = data.map((item) => {
-    if (item.codes.rel_users_to_organizations?.id == link.value.code) {
-      return {
-        ...item,
-      };
-    }
-
-    // return { ...item };
-  });
-
-  records.value = result;
-  console.log(result);
+  records.value = await getRecords(link_id.value.code);
 });
 </script>
 <style scoped></style>
