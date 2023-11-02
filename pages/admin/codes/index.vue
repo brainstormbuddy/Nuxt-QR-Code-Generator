@@ -75,7 +75,7 @@
   </div>
 </template>
 <script setup>
-definePageMeta({ layout: "admin" });
+definePageMeta({ layout: "admin", auth: true, middleware: "session" });
 import useApi from "@/composables/useApi";
 const { getCodes } = useApi();
 const codes = ref([]);
@@ -86,21 +86,9 @@ const deleted_codes = ref([]);
 
 const link_id = ref();
 
-// const validate_access = async () => {
-//   console.log("validate_access");
-
-//   session_id.value = await JSON.parse(
-//     localStorage.getItem(`${config.public.SUPABASE_SB}`)
-//   );
-
-//   if (session_id.value == undefined) {
-//     return navigateTo("/");
-//   }
-// };
-
 onMounted(async () => {
   link_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
-  // await validate_access();
+
   codes.value = await getCodes(link_id.value.code);
   current_codes.value = codes.value.filter((code) => code.state === "pending");
   overdue_codes.value = codes.value.filter((code) => code.state === "overdue");

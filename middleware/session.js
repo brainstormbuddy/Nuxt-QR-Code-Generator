@@ -1,15 +1,9 @@
 export default defineNuxtRouteMiddleware(async (to, _from) => {
-  const config = useRuntimeConfig();
-  const session_id = ref({});
-
+  const supabase = useSupabaseClient();
   console.log("middleware");
-
-  onMounted(async () => {
-    session_id.value = await JSON.parse(
-      localStorage.getItem(`${config.public.SUPABASE_SB}`)
-    );
-
-    if (session_id.value === undefined) {
+  supabase.auth.getUser().then((user) => {
+    console.log(user);
+    if (user.data.user === null) {
       return navigateTo("/");
     }
   });
