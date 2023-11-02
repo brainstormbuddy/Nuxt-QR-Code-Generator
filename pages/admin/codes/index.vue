@@ -1,9 +1,9 @@
 <template>
-  <h1 v-if="organization != null">Codes</h1>
+  <h1 v-if="link_id != null">Codes</h1>
   <div class="mt-4 mb-4">
-    <codes-form-generate-qr v-if="organization != null" />
+    <codes-form-generate-qr v-if="link_id != null" />
   </div>
-  <div class="card" v-if="organization != null">
+  <div class="card" v-if="link_id != null">
     <TabView>
       <TabPanel>
         <template #header>
@@ -76,40 +76,32 @@
 </template>
 <script setup>
 definePageMeta({ layout: "admin" });
-const supabase = useSupabaseClient();
-const config = useRuntimeConfig();
-const session_id = ref({});
+import useApi from "@/composables/useApi";
+const { getCodes } = useApi();
 const codes = ref([]);
-const organization = ref("");
 const current_codes = ref([]);
 const overdue_codes = ref([]);
 const used_codes = ref([]);
 const deleted_codes = ref([]);
 
-const load_codes = async () => {
-  organization.value = JSON.parse(localStorage.getItem("sb_org_id"));
-  const { data, error } = await supabase
-    .from("codes")
-    .select("*")
-    .eq("link_id", organization.value.code);
-  codes.value = data;
-};
+const link_id = ref();
 
-const validate_access = async () => {
-  console.log("validate_access");
+// const validate_access = async () => {
+//   console.log("validate_access");
 
-  session_id.value = await JSON.parse(
-    localStorage.getItem(`${config.public.SUPABASE_SB}`)
-  );
+//   session_id.value = await JSON.parse(
+//     localStorage.getItem(`${config.public.SUPABASE_SB}`)
+//   );
 
-  if (session_id.value == undefined) {
-    return navigateTo("/");
-  }
-};
+//   if (session_id.value == undefined) {
+//     return navigateTo("/");
+//   }
+// };
 
 onMounted(async () => {
-  await validate_access();
-  await load_codes();
+  link_id.value = JSON.parse(localStorage.getItem("sb_org_id"));
+  // await validate_access();
+  codes.value = await getCodes(link_id.value.code);
   current_codes.value = codes.value.filter((code) => code.state === "pending");
   overdue_codes.value = codes.value.filter((code) => code.state === "overdue");
   used_codes.value = codes.value.filter((code) => code.state === "used");
