@@ -61,7 +61,8 @@ import { showToast } from "~/utils/toast";
 
 const supabase = useSupabaseClient();
 
-const config = useRuntimeConfig();
+import useApi from "@/composables/useApi";
+const { getProfile, updateCode, createRecords } = useApi();
 const props = defineProps({
   code: {
     type: Object,
@@ -69,59 +70,36 @@ const props = defineProps({
   },
 });
 
-const session_id = ref();
-const profile_id = ref();
+const user = ref();
 
 onMounted(async () => {
-  session_id.value = await JSON.parse(
-    localStorage.getItem(`${config.public.SUPABASE_SB}`)
-  );
-
-  let { data: profiles, error } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("user_id", session_id.value.user.id);
-  profile_id.value = profiles[0].id;
-  //   console.log(profile_id.value);
+  const data_user = await getProfile();
+  user.value = data_user;
 });
 
 const validate = async () => {
   console.log("Validate");
 
   try {
-    const { data, error } = await supabase
-      .from("codes")
-      .update({
-        state: "used",
-        approved_date: new Date(),
-        approved_by: profile_id.value,
-      })
-      .eq("id", props.code.id)
-      .select();
+    const update_code = await updateCode(props.code.id, {
+      state: "used",
+      approved_date: new Date(),
+      approved_by: user.value.profile.id,
+    });
 
-    if (error) {
-      showToast(toast, {
-        severity: "warn",
-        summary: "Failed",
-        detail: `${error}`,
-        life: 3000,
-      });
-    } else {
-      const { data: records, error } = await supabase
-        .from("records")
-        .insert([{ description: props.code.name, code_id: props.code.id }])
-        .select();
+    const record = await createRecords({
+      description: props.code.name,
+      code_id: props.code.id,
+    });
 
-      showToast(toast, {
-        severity: "success",
-        summary: "Success",
-        detail: "Authorized Access",
-        life: 3000,
-      });
+    showToast(toast, {
+      severity: "success",
+      summary: "Success",
+      detail: "Authorized Access",
+      life: 3000,
+    });
 
-      // navigateTo("/admin/scanner");
-      reloadNuxtApp();
-    }
+    reloadNuxtApp();
   } catch (error) {
     console.log(error);
     showToast(toast, {
