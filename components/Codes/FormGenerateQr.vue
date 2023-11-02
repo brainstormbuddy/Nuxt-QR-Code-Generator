@@ -27,7 +27,12 @@
             outlined
             @click="clear"
           />
-          <Button label="Download" icon="pi pi-download" class="ml-1 mr-1" />
+          <Button
+            label="Download"
+            icon="pi pi-download"
+            class="ml-1 mr-1"
+            @click="download"
+          />
         </div>
       </div>
       <form @submit.prevent="generateQR">
@@ -167,6 +172,20 @@ const generateQR = async () => {
       life: 3000,
     });
   }
+};
+
+const download = async () => {
+  console.log("Download");
+  var source = image_qrcode._value;
+
+  var a = document.createElement("a");
+  // const fileName = document.getElementById("name").value;
+
+  a.download = `QR_AMOSO_${form.value.name}.png`;
+  a.target = "_blank";
+  a.href = source;
+
+  a.click();
 };
 
 const clear = () => {
