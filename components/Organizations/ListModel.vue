@@ -52,6 +52,9 @@
           label="Copy invitation code "
           class="full-width-button"
           @click="copyCode"
+          severity="info"
+          size="large"
+          icon="pi pi-copy"
         />
       </template>
     </Card>

@@ -44,7 +44,10 @@ import { useToast } from "primevue/usetoast";
 const toast = useToast();
 import { showToast } from "~/utils/toast";
 
-const supabase = useSupabaseClient();
+import useApi from "@/composables/useApi";
+const { createOrganization, createLink } = useApi();
+
+// const supabase = useSupabaseClient();
 const form = ref({});
 
 const submit = async () => {
@@ -54,29 +57,26 @@ const submit = async () => {
   try {
     form.value.code = Math.floor(1000 + Math.random() * 9000);
     const fields = JSON.parse(JSON.stringify(form.value));
-    console.log(fields);
-    const { data, error } = await supabase
-      .from("organizations")
-      .insert([fields])
-      .select();
-    console.log(data);
-    if (error) {
-      showToast(toast, {
-        severity: "warn",
-        summary: "Failed",
-        detail: `${error}`,
-        life: 3000,
-      });
-    } else {
-      showToast(toast, {
-        severity: "success",
-        summary: "Success",
-        detail: "Authorized access",
-        life: 3000,
-      });
+    // console.log(fields);
+    const data = await createOrganization(fields);
 
-      navigateTo("/admin/organizations");
-    }
+    const fields_link = {
+      profile_id: JSON.parse(localStorage.getItem("sb_org_id")).profile_id,
+      organization_id: data[0].id,
+    };
+
+    // console.log(fields_link);
+
+    const result = await createLink(fields_link);
+    console.log(result);
+    showToast(toast, {
+      severity: "success",
+      summary: "Success",
+      detail: "Authorized access",
+      life: 3000,
+    });
+
+    navigateTo("/admin/organizations");
   } catch (error) {
     console.error(error);
     showToast(toast, {

@@ -20,7 +20,6 @@
           class="full-width-button"
           size="large"
           type="submit"
-          severity="success"
         />
       </div>
     </div>
@@ -32,33 +31,34 @@ import { useToast } from "primevue/usetoast";
 const toast = useToast();
 import { showToast } from "~/utils/toast";
 
-const config = useRuntimeConfig();
+import useApi from "@/composables/useApi";
+const { searchOrganizationByCode, searchLinkExist, createLink } = useApi();
 
-const supabase = useSupabaseClient();
+// const config = useRuntimeConfig();
+
+// const supabase = useSupabaseClient();
 const code = ref("");
-const session_id = ref("");
+// const session_id = ref("");
 const profile_id = ref("");
 
 onMounted(async () => {
-  session_id.value = await JSON.parse(
-    localStorage.getItem(`${config.public.SUPABASE_SB}`)
-  );
-  const { data: profile, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", session_id.value.user.id);
+  // session_id.value = await JSON.parse(
+  //   localStorage.getItem(`${config.public.SUPABASE_SB}`)
+  // );
+  // const { data: profile, error } = await supabase
+  //   .from("profiles")
+  //   .select("*")
+  //   .eq("user_id", session_id.value.user.id);
 
-  profile_id.value = profile[0].id;
+  profile_id.value = JSON.parse(localStorage.getItem("sb_org_id")).profile_id;
+  // console.log(profile_id.value);
 });
 
 const submit = async () => {
   console.log("Submit");
   try {
     console.log(code.value);
-    const { data: organizations, error } = await supabase
-      .from("organizations")
-      .select("*")
-      .eq("code", code.value);
+    const organizations = await searchOrganizationByCode(code.value);
     if (organizations.length === 0) {
       console.log("Not found");
       showToast(toast, {
@@ -69,12 +69,8 @@ const submit = async () => {
       });
     } else {
       console.log("Found");
-      // verificar si existe
-      const { data: rel, error } = await supabase
-        .from("rel_users_to_organizations")
-        .select("*")
-        .eq("profile_id", profile_id.value)
-        .eq("organization_id", organizations[0].id);
+
+      const rel = await searchLinkExist(profile_id.value, organizations[0].id);
 
       if (rel.length === 0) {
         const fields = {
@@ -82,28 +78,15 @@ const submit = async () => {
           organization_id: organizations[0].id,
         };
         console.log(fields);
-        const { data, error: error_insert } = await supabase
-          .from("rel_users_to_organizations")
-          .insert([fields])
-          .select();
-        if (error_insert) {
-          showToast(toast, {
-            severity: "warn",
-            summary: "Failed",
-            detail: `${error_insert}`,
-            life: 3000,
-          });
-          console.log(error_insert);
-        } else {
-          showToast(toast, {
-            severity: "success",
-            summary: "Link success",
-            detail: `Account has been linked successfully`,
-            life: 3000,
-          });
-          // navigateTo("/admin");
-          window.location.href = "/admin";
-        }
+        const data = await createLink(fields);
+        console.log(data);
+        showToast(toast, {
+          severity: "success",
+          summary: "Link success",
+          detail: `Account has been linked successfully`,
+          life: 3000,
+        });
+        window.location.href = "/admin";
       } else {
         showToast(toast, {
           severity: "warn",
@@ -115,6 +98,12 @@ const submit = async () => {
     }
   } catch (error) {
     console.log(error);
+    showToast(toast, {
+      severity: "error",
+      summary: "Failed",
+      detail: `${error}`,
+      life: 3000,
+    });
   }
 };
 </script>

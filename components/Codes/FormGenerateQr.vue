@@ -179,7 +179,6 @@ const download = async () => {
   var source = image_qrcode._value;
 
   var a = document.createElement("a");
-  // const fileName = document.getElementById("name").value;
 
   a.download = `QR_AMOSO_${form.value.name}.png`;
   a.target = "_blank";
