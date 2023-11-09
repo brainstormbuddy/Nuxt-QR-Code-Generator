@@ -25,7 +25,6 @@ export default function () {
       .insert([fields])
       .select();
     if (error) throw error;
-    console.log(data);
     return data;
   }
 

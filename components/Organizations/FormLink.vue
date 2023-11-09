@@ -20,7 +20,6 @@
           class="full-width-button"
           size="large"
           type="submit"
-          severity="success"
         />
       </div>
     </div>

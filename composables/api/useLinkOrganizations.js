@@ -9,7 +9,16 @@ export default function () {
     return data;
   }
 
+  async function createLink(fields) {
+    const { data, error } = await supabase
+      .from("rel_users_to_organizations")
+      .insert([fields]);
+    if (error) throw error;
+    return data;
+  }
+
   return {
     getLinksOrganizations,
+    createLink,
   };
 }

@@ -74,6 +74,16 @@ const items = ref([
   { label: "My QRs codes", icon: "pi pi-fw pi-qrcode", url: "/admin/codes" },
   { label: "Records", icon: "pi pi-fw pi-list", url: "/admin/records" },
   {
+    label: "Add invitation code",
+    icon: "pi pi-fw pi-bolt",
+    url: "/admin/organizations/link",
+  },
+  {
+    label: "My organizations",
+    icon: "pi pi-fw pi-building",
+    url: "/admin/my-organizations/",
+  },
+  {
     label: "Users",
     icon: "pi pi-fw pi-users",
     url: "/admin/users",
