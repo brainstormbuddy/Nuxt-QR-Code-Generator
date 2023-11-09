@@ -6,8 +6,11 @@ export default function () {
     return data;
   }
 
-  async function getMyOrganizations() {
-    const { data, error } = await supabase.from("organizations").select("*");
+  async function searchOrganizationByCode(code) {
+    const { data, error } = await supabase
+      .from("organizations")
+      .select("*")
+      .eq("code", code);
     if (error) throw error;
     return data;
   }
@@ -18,6 +21,8 @@ export default function () {
       .select("*")
       .eq("id", id)
       .limit(1);
+    if (error) throw error;
+    return data;
   }
 
   async function createOrganization(fields) {
@@ -31,7 +36,7 @@ export default function () {
 
   return {
     getOrganizations,
-    getMyOrganizations,
+    searchOrganizationByCode,
     getOrganization,
     createOrganization,
   };
